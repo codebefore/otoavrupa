@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araç Servis Mobil Uygulaması Müşteri Sunumu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(0, 51, 102, 0.9), rgba(0, 102, 153, 0.85));
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/706cd5724189.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        .header {
+            padding: 40px 70px 20px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+        }
+        .architecture {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .system-box {
+            width: 30%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .system-icon {
+            font-size: 48px;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+        .system-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+        .system-description {
+            color: #ffffff;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        .flow-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .flow-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .flow-title i {
+            margin-right: 15px;
+            font-size: 28px;
+        }
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+        .flow-step {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4fc3f7;
+            color: #003366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .step-icon {
+            font-size: 36px;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+        .step-text {
+            color: #ffffff;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        .highlight {
+            color: #ffcc80;
+            font-weight: 600;
+        }
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 70px;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <h1 class="title">Nasıl Çalışıyor?</h1>
+        </div>
+        <div class="content">
+            <div class="architecture">
+                <div class="system-box">
+                    <i class="material-icons system-icon">computer</i>
+                    <h3 class="system-title">Mevcut Sisteminiz</h3>
+                    <p class="system-description">Delta Pro masaüstü uygulaması<br>Servis ekibi tarafından kullanılır</p>
+                </div>
+                <div class="system-box">
+                    <i class="material-icons system-icon">sync</i>
+                    <h3 class="system-title">Entegrasyon</h3>
+                    <p class="system-description">Otomatik API bağlantısı<br>Veri senkronizasyonu</p>
+                </div>
+                <div class="system-box">
+                    <i class="material-icons system-icon">smartphone</i>
+                    <h3 class="system-title">Mobil Uygulama</h3>
+                    <p class="system-description">iOS + Android<br>Müşteri erişimi</p>
+                </div>
+            </div>
+            <div class="flow-section">
+                <div class="flow-title">
+                    <i class="material-icons">swap_horiz</i>
+                    <span>Veri Akışı</span>
+                </div>
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="step-number">1</div>
+                        <i class="material-icons step-icon">edit</i>
+                        <p class="step-text">Siz Delta Pro'da <span class="highlight">işlem yaparsınız</span></p>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">2</div>
+                        <i class="material-icons step-icon">cloud_upload</i>
+                        <p class="step-text">Sistem <span class="highlight">otomatik</span> olarak mobil uygulamaya yansır</p>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">3</div>
+                        <i class="material-icons step-icon">visibility</i>
+                        <p class="step-text">Müşteri <span class="highlight">uygulamadan</span> durumu görür</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)
+        </div>
+    </div>
+</body>
+</html>

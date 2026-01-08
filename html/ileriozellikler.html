@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araç Servis Mobil Uygulaması Müşteri Sunumu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(0, 51, 102, 0.9), rgba(0, 102, 153, 0.85));
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/31b822969766.jpeg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        .header {
+            padding: 40px 70px 20px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .content {
+            display: flex;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+        }
+        .ai-chatbot {
+            width: 60%;
+            padding-right: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        .timeline {
+            width: 40%;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title i {
+            margin-right: 15px;
+            font-size: 32px;
+        }
+        .chatbot-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chatbot-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chatbot-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(79, 195, 247, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+        .chatbot-icon i {
+            font-size: 36px;
+            color: #4fc3f7;
+        }
+        .chatbot-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .chatbot-features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-grow: 1;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+        }
+        .feature-icon {
+            color: #81c784;
+            font-size: 24px;
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+        .feature-text {
+            color: #ffffff;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+        .highlight {
+            color: #ffcc80;
+            font-weight: 600;
+        }
+        .chatbot-examples {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .example-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+        .example-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .example-item:last-child {
+            margin-bottom: 0;
+        }
+        .example-icon {
+            color: #81c784;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .example-text {
+            color: #ffffff;
+            font-size: 18px;
+        }
+        .timeline-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .phase-box {
+            display: flex;
+            margin-bottom: 25px;
+        }
+        .phase-box:last-child {
+            margin-bottom: 0;
+        }
+        .phase-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4fc3f7;
+            color: #003366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        .phase-content {
+            flex-grow: 1;
+        }
+        .phase-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .phase-description {
+            color: #e0e0e0;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        .note-box {
+            margin-top: 20px;
+            background-color: rgba(255, 204, 128, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .note-icon {
+            color: #ffcc80;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+        .note-text {
+            color: #ffffff;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 70px;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <h1 class="title">İleri Özellikler (Faz 2)</h1>
+        </div>
+        <div class="content">
+            <div class="ai-chatbot">
+                <div class="section-title">
+                    <i class="material-icons">smart_toy</i>
+                    <span>Yapay Zeka Destekli Sohbot</span>
+                </div>
+                <div class="chatbot-container">
+                    <div class="chatbot-header">
+                        <div class="chatbot-icon">
+                            <i class="material-icons">chat</i>
+                        </div>
+                        <h3 class="chatbot-title">Akıllı Müşteri Desteği</h3>
+                    </div>
+                    <div class="chatbot-features">
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">question_answer</i>
+                            <p class="feature-text">Müşteriler sorularını <span class="highlight">yazarak</span> sorabilecek</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">analytics</i>
+                            <p class="feature-text">Yapay zeka <span class="highlight">sadece araç verilerine</span> dayanarak cevap verecek</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">speed</i>
+                            <p class="feature-text">Anında ve <span class="highlight">otomatik</span> çözümler sunacak</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">history</i>
+                            <p class="feature-text">Geçmiş servis kayıtlarına dayalı cevaplar</p>
+                        </div>
+                    </div>
+                    <div class="chatbot-examples">
+                        <h4 class="example-title">Örnek Sorular:</h4>
+                        <div class="example-item">
+                            <i class="material-icons example-icon">chat_bubble</i>
+                            <span class="example-text">"Aracıma ne işlem yapıldı?"</span>
+                        </div>
+                        <div class="example-item">
+                            <i class="material-icons example-icon">chat_bubble</i>
+                            <span class="example-text">"Bir sonraki bakım ne zaman?"</span>
+                        </div>
+                        <div class="example-item">
+                            <i class="material-icons example-icon">chat_bubble</i>
+                            <span class="example-text">"Fren balatası değişmiş mi?"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline">
+                <div class="section-title">
+                    <i class="material-icons">schedule</i>
+                    <span>Zaman Çizelgesi</span>
+                </div>
+                <div class="timeline-container">
+                    <div class="phase-box">
+                        <div class="phase-number">1</div>
+                        <div class="phase-content">
+                            <h3 class="phase-title">MVP Tamamlanması</h3>
+                            <p class="phase-description">Temel özelliklerle uygulama geliştirme ve canlıya alma</p>
+                        </div>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-number">2</div>
+                        <div class="phase-content">
+                            <h3 class="phase-title">Yapay Zeka Entegrasyonu</h3>
+                            <p class="phase-description">AI modeli eğitimi ve sohbot entegrasyonu</p>
+                        </div>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-number">3</div>
+                        <div class="phase-content">
+                            <h3 class="phase-title">Test ve İyileştirme</h3>
+                            <p class="phase-description">Kullanıcı geri bildirimlerine göre optimize etme</p>
+                        </div>
+                    </div>
+                    <div class="note-box">
+                        <i class="material-icons note-icon">lightbulb</i>
+                        <p class="note-text">MVP'den <span class="highlight">1-2 ay sonra</span> planlanıyor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)
+        </div>
+    </div>
+</body>
+</html>

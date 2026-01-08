@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Araç Servis Mobil Uygulaması Müşteri Sunumu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .slide {
+            width: 1280px;
+            min-height: 720px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(0, 51, 102, 0.9), rgba(0, 102, 153, 0.85));
+            display: flex;
+            flex-direction: column;
+        }
+        .slide::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sfile.chatglm.cn/images-ppt/9e14132d2ee0.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        .header {
+            padding: 40px 70px 20px;
+        }
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .content {
+            display: flex;
+            flex-grow: 1;
+            padding: 0 70px 40px;
+        }
+        .security-section {
+            width: 50%;
+            padding-right: 30px;
+        }
+        .infrastructure-section {
+            width: 50%;
+            padding-left: 30px;
+        }
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title i {
+            margin-right: 15px;
+            font-size: 32px;
+        }
+        .security-list, .infrastructure-list {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .security-item, .infrastructure-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .security-item:last-child, .infrastructure-item:last-child {
+            margin-bottom: 0;
+        }
+        .security-item i, .infrastructure-item i {
+            color: #4fc3f7;
+            font-size: 28px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        .infrastructure-item i {
+            color: #81c784;
+        }
+        .item-text {
+            color: #ffffff;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+        .highlight {
+            color: #ffcc80;
+            font-weight: 600;
+        }
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            left: 70px;
+            color: #e0e0e0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="header">
+            <h1 class="title">Güvenlik</h1>
+        </div>
+        <div class="content">
+            <div class="security-section">
+                <div class="section-title">
+                    <i class="material-icons">security</i>
+                    <span>Veri Güvenliği</span>
+                </div>
+                <div class="security-list">
+                    <div class="security-item">
+                        <i class="material-icons">lock</i>
+                        <span class="item-text">Delta Pro'ya <span class="highlight">dışarıdan erişilmez</span></span>
+                    </div>
+                    <div class="security-item">
+                        <i class="material-icons">visibility_off</i>
+                        <span class="item-text">Sadece <span class="highlight">okuma</span> işlemi yapılır</span>
+                    </div>
+                    <div class="security-item">
+                        <i class="material-icons">enhanced_encryption</i>
+                        <span class="item-text">Veriler <span class="highlight">şifreli</span> iletişimle korunur</span>
+                    </div>
+                    <div class="security-item">
+                        <i class="material-icons">block</i>
+                        <span class="item-text">Müşteri sadece bilgi görür (değiştiremez)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="infrastructure-section">
+                <div class="section-title">
+                    <i class="material-icons">dns</i>
+                    <span>Altyapı Güvenliği</span>
+                </div>
+                <div class="infrastructure-list">
+                    <div class="infrastructure-item">
+                        <i class="material-icons">storage</i>
+                        <span class="item-text"><span class="highlight">Güvenli</span> sunucu (VPS)</span>
+                    </div>
+                    <div class="infrastructure-item">
+                        <i class="material-icons">https</i>
+                        <span class="item-text"><span class="highlight">HTTPS</span> şifreleme</span>
+                    </div>
+                    <div class="infrastructure-item">
+                        <i class="material-icons">sms</i>
+                        <span class="item-text"><span class="highlight">Güvenli</span> SMS doğrulama</span>
+                    </div>
+                    <div class="infrastructure-item">
+                        <i class="material-icons">backup</i>
+                        <span class="item-text">Regular <span class="highlight">backup'lar</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)
+        </div>
+    </div>
+</body>
+</html>
