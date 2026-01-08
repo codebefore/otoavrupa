@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OtoAvrupa - Araç Servis Mobil Uygulaması Müşteri Sunumu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background-color: #1a1a1a;
+            color: #333;
+        }
+
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(0, 51, 102, 0.95), rgba(0, 102, 153, 0.9));
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        #section-problems::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/3bd9bef19743.jpg');
+        }
+
+        #section-solution::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/9e14132d2ee0.jpg');
+        }
+
+        #section-features::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/2fee2cbf3788.png');
+        }
+
+        #section-how::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/706cd5724189.jpg');
+        }
+
+        #section-screens::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/2fee2cbf3788.png');
+        }
+
+        #section-notifications::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/5a97607335a6.png');
+        }
+
+        #section-security::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/9e14132d2ee0.jpg');
+        }
+
+        #section-technology::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/9e14132d2ee0.jpg');
+        }
+
+        #section-timeline::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ce7e277da7ea.png');
+        }
+
+        #section-cost::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/ce7e277da7ea.png');
+        }
+
+        #section-advanced::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/31b822969766.jpeg');
+        }
+
+        #section-next::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/3b3f98f19bbb.png');
+        }
+
+        #section-summary::before {
+            background-image: url('https://sfile.chatglm.cn/images-ppt/9e14132d2ee0.jpg');
+        }
+
+        .header {
+            padding: 50px 70px 30px;
+        }
+
+        .title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 0 70px 60px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: rgba(0, 51, 102, 0.9);
+            padding: 20px 10px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-item {
+            display: block;
+            width: 12px;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: #4fc3f7;
+            transform: scale(1.3);
+        }
+
+        .nav-item::before {
+            content: attr(data-title);
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 51, 102, 0.95);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .nav-item:hover::before {
+            opacity: 1;
+        }
+
+        /* Common Styles */
+        .section-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title i {
+            margin-right: 15px;
+            font-size: 36px;
+        }
+
+        .highlight {
+            color: #ffcc80;
+            font-weight: 600;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 70px;
+            color: #e0e0e0;
+            font-size: 18px;
+        }
+
+        /* Problem & Solution */
+        .problem-section, .solution-section {
+            width: 50%;
+            padding: 0 30px;
+        }
+
+        .problem-section {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .list-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .list-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .list-item i {
+            font-size: 28px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .list-item.problem i {
+            color: #ff5252;
+        }
+
+        .list-item.solution i {
+            color: #4caf50;
+        }
+
+        .item-text {
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1.5;
+        }
+
+        /* Features Grid */
+        .features-section {
+            width: 60%;
+            padding-right: 30px;
+        }
+
+        .excluded-section {
+            width: 40%;
+            padding-left: 30px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .feature-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(79, 195, 247, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .feature-icon i {
+            font-size: 32px;
+            color: #4fc3f7;
+        }
+
+        .feature-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .feature-description {
+            color: #e0e0e0;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .excluded-list {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .excluded-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .excluded-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .excluded-icon {
+            color: #ff9800;
+            font-size: 32px;
+            margin-right: 15px;
+        }
+
+        .excluded-text {
+            color: #ffffff;
+            font-size: 22px;
+        }
+
+        /* How it works */
+        .architecture {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .system-box {
+            width: 30%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .system-icon {
+            font-size: 56px;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+        }
+
+        .system-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+        }
+
+        .system-description {
+            color: #ffffff;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .flow-section {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flow-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .flow-title i {
+            margin-right: 15px;
+            font-size: 32px;
+        }
+
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .flow-step {
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4fc3f7;
+            color: #003366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .step-icon {
+            font-size: 42px;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+        }
+
+        .step-text {
+            color: #ffffff;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        /* Screens Grid */
+        .screens-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .screen-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .screen-card:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .screen-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            background-color: #000;
+        }
+
+        .screen-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .screen-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .screen-title i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .screen-features {
+            list-style: none;
+        }
+
+        .screen-feature {
+            color: #ffffff;
+            font-size: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .screen-feature i {
+            color: #81c784;
+            font-size: 20px;
+            margin-right: 10px;
+        }
+
+        /* Notifications */
+        .notification-intro {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .intro-text {
+            color: #ffffff;
+            font-size: 24px;
+            max-width: 80%;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .notifications-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .notification-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            transition: transform 0.3s;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .notification-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 25px;
+            flex-shrink: 0;
+        }
+
+        .notification-icon i {
+            font-size: 42px;
+        }
+
+        .icon-1 { background-color: rgba(79, 195, 247, 0.2); color: #4fc3f7; }
+        .icon-2 { background-color: rgba(129, 199, 132, 0.2); color: #81c784; }
+        .icon-3 { background-color: rgba(255, 204, 128, 0.2); color: #ffcc80; }
+        .icon-4 { background-color: rgba(186, 104, 200, 0.2); color: #ba68c8; }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .notification-message {
+            color: #e0e0e0;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        /* Security */
+        .security-section, .infrastructure-section {
+            width: 50%;
+            padding: 0 30px;
+        }
+
+        .security-section {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .security-list, .infrastructure-list {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .security-item, .infrastructure-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .security-item:last-child, .infrastructure-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .security-item i, .infrastructure-item i {
+            font-size: 32px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .security-item i {
+            color: #4fc3f7;
+        }
+
+        .infrastructure-item i {
+            color: #81c784;
+        }
+
+        /* Technology */
+        .tech-section {
+            width: 60%;
+            padding-right: 30px;
+        }
+
+        .free-tools-section {
+            width: 40%;
+            padding-left: 30px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .tech-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .tech-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tech-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(79, 195, 247, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .tech-icon i {
+            font-size: 32px;
+            color: #4fc3f7;
+        }
+
+        .tech-name {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .tech-description {
+            color: #e0e0e0;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .free-tools {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .free-tool-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .free-tool-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .free-tool-icon {
+            color: #81c784;
+            font-size: 32px;
+            margin-right: 15px;
+        }
+
+        .free-tool-text {
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        .savings {
+            margin-top: 25px;
+            background-color: rgba(129, 199, 132, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .savings-text {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .savings-value {
+            color: #ffcc80;
+            font-size: 28px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        /* Timeline */
+        .weeks-container {
+            display: flex;
+            justify-content: space-between;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .week-card {
+            width: 16%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s;
+        }
+
+        .week-card:hover {
+            transform: translateY(-10px);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .week-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+        }
+
+        .week-icon {
+            font-size: 48px;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+        }
+
+        .week-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .week-description {
+            font-size: 18px;
+            color: #e0e0e0;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .note {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 20px;
+            color: #ffcc80;
+            font-style: italic;
+        }
+
+        /* Cost */
+        .cost-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .cost-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .cost-icon {
+            font-size: 64px;
+            color: #4fc3f7;
+            margin-bottom: 20px;
+        }
+
+        .cost-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .cost-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffcc80;
+            margin-bottom: 10px;
+        }
+
+        .cost-description {
+            font-size: 20px;
+            color: #e0e0e0;
+        }
+
+        /* Advanced Features */
+        .ai-chatbot {
+            width: 60%;
+            padding-right: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .timeline {
+            width: 40%;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chatbot-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chatbot-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chatbot-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: rgba(79, 195, 247, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .chatbot-icon i {
+            font-size: 42px;
+            color: #4fc3f7;
+        }
+
+        .chatbot-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .chatbot-features {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            flex-grow: 1;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .feature-icon {
+            color: #81c784;
+            font-size: 28px;
+            margin-right: 15px;
+            margin-top: 2px;
+        }
+
+        .feature-text {
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        .chatbot-examples {
+            margin-top: 25px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .example-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #4fc3f7;
+            margin-bottom: 18px;
+        }
+
+        .example-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .example-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .example-icon {
+            color: #81c784;
+            font-size: 22px;
+            margin-right: 12px;
+        }
+
+        .example-text {
+            color: #ffffff;
+            font-size: 20px;
+        }
+
+        .timeline-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .phase-box {
+            display: flex;
+            margin-bottom: 30px;
+        }
+
+        .phase-box:last-child {
+            margin-bottom: 0;
+        }
+
+        .phase-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4fc3f7;
+            color: #003366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-right: 25px;
+            flex-shrink: 0;
+        }
+
+        .phase-content {
+            flex-grow: 1;
+        }
+
+        .phase-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .phase-description {
+            color: #e0e0e0;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        .note-box {
+            margin-top: 25px;
+            background-color: rgba(255, 204, 128, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .note-icon {
+            color: #ffcc80;
+            font-size: 28px;
+            margin-right: 12px;
+        }
+
+        .note-text {
+            color: #ffffff;
+            font-size: 20px;
+            line-height: 1.4;
+        }
+
+        /* Next Steps */
+        .steps-section {
+            width: 60%;
+            padding-right: 30px;
+        }
+
+        .contact-section {
+            width: 40%;
+            padding-left: 30px;
+        }
+
+        .steps-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4fc3f7;
+            color: #003366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-right: 25px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .step-description {
+            color: #e0e0e0;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        .contact-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: rgba(129, 199, 132, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 25px;
+            flex-shrink: 0;
+        }
+
+        .contact-icon i {
+            font-size: 32px;
+            color: #81c784;
+        }
+
+        .contact-text {
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        /* Summary */
+        .benefits-section {
+            width: 60%;
+            padding-right: 30px;
+        }
+
+        .value-section {
+            width: 40%;
+            padding-left: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            flex-grow: 1;
+        }
+
+        .benefit-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .benefit-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .benefit-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 18px;
+            flex-shrink: 0;
+        }
+
+        .icon-1 { background-color: rgba(79, 195, 247, 0.2); color: #4fc3f7; }
+        .icon-2 { background-color: rgba(129, 199, 132, 0.2); color: #81c784; }
+        .icon-3 { background-color: rgba(255, 204, 128, 0.2); color: #ffcc80; }
+        .icon-4 { background-color: rgba(186, 104, 200, 0.2); color: #ba68c8; }
+        .icon-5 { background-color: rgba(255, 138, 128, 0.2); color: #ff8a80; }
+
+        .benefit-icon i {
+            font-size: 32px;
+        }
+
+        .benefit-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .benefit-description {
+            color: #e0e0e0;
+            font-size: 20px;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .value-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .value-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .value-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .value-icon {
+            color: #4fc3f7;
+            font-size: 32px;
+            margin-right: 18px;
+        }
+
+        .value-text {
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        .commitment-box {
+            background-color: rgba(79, 195, 247, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .commitment-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 18px;
+        }
+
+        .commitment-timeline {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .week-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #4fc3f7;
+            color: #003366;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 6px;
+        }
+
+        .commitment-text {
+            color: #ffffff;
+            font-size: 22px;
+            line-height: 1.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .header {
+                padding: 30px 40px 20px;
+            }
+
+            .content {
+                padding: 0 40px 40px;
+            }
+
+            .title {
+                font-size: 36px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .features-grid, .screens-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-section, .excluded-section,
+            .problem-section, .solution-section,
+            .security-section, .infrastructure-section,
+            .tech-section, .free-tools-section,
+            .steps-section, .contact-section,
+            .benefits-section, .value-section,
+            .ai-chatbot, .timeline {
+                width: 100%;
+                padding: 20px 0;
+            }
+
+            .problem-section, .security-section {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                margin-bottom: 30px;
+            }
+
+            .architecture, .weeks-container, .cost-breakdown {
+                flex-direction: column;
+            }
+
+            .system-box, .week-card, .cost-card {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .flow-steps {
+                flex-direction: column;
+            }
+
+            .flow-step {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a class="nav-item active" href="#section-problems" data-title="Problem"></a>
+        <a class="nav-item" href="#section-solution" data-title="Çözüm"></a>
+        <a class="nav-item" href="#section-features" data-title="Özellikler"></a>
+        <a class="nav-item" href="#section-how" data-title="Nasıl?"></a>
+        <a class="nav-item" href="#section-screens" data-title="Ekranlar"></a>
+        <a class="nav-item" href="#section-notifications" data-title="Bildirimler"></a>
+        <a class="nav-item" href="#section-security" data-title="Güvenlik"></a>
+        <a class="nav-item" href="#section-technology" data-title="Teknoloji"></a>
+        <a class="nav-item" href="#section-timeline" data-title="Zaman"></a>
+        <a class="nav-item" href="#section-cost" data-title="Maliyet"></a>
+        <a class="nav-item" href="#section-advanced" data-title="İleri"></a>
+        <a class="nav-item" href="#section-next" data-title="Sonraki"></a>
+        <a class="nav-item" href="#section-summary" data-title="Özet"></a>
+    </nav>
+
+    <!-- Section 1: Problem -->
+    <section class="slide" id="section-problems">
+        <div class="header">
+            <h1 class="title">Problem ve Çözüm</h1>
+        </div>
+        <div class="content" style="display: flex;">
+            <div class="problem-section">
+                <div class="section-title">
+                    <i class="material-icons">error_outline</i>
+                    <span>Mevcut Sorunlar</span>
+                </div>
+                <div class="list-container">
+                    <div class="list-item problem">
+                        <i class="material-icons">phone</i>
+                        <span class="item-text">Müşteriler telefon ederek bilgi almak zorunda</span>
+                    </div>
+                    <div class="list-item problem">
+                        <i class="material-icons">visibility_off</i>
+                        <span class="item-text">Servis süreci şeffaf değil</span>
+                    </div>
+                    <div class="list-item problem">
+                        <i class="material-icons">question_answer</i>
+                        <span class="item-text">Sürekli bilgi sorusu geliyor</span>
+                    </div>
+                    <div class="list-item problem">
+                        <i class="material-icons">sentiment_dissatisfied</i>
+                        <span class="item-text">Müşteri memnuniyetsizliği ve operasyonel yük</span>
+                    </div>
+                </div>
+            </div>
+            <div class="solution-section">
+                <div class="section-title">
+                    <i class="material-icons">lightbulb</i>
+                    <span>Çözüm: Mobil Uygulama</span>
+                </div>
+                <div class="list-container">
+                    <div class="list-item solution">
+                        <i class="material-icons">smartphone</i>
+                        <span class="item-text">Müşterileriniz telefon etmek yerine uygulama üzerinden</span>
+                    </div>
+                    <div class="list-item solution">
+                        <i class="material-icons">visibility</i>
+                        <span class="item-text">Araçlarının <span class="highlight">güncel durumunu</span> görür</span>
+                    </div>
+                    <div class="list-item solution">
+                        <i class="material-icons">history</i>
+                        <span class="item-text"><span class="highlight">Bakım/servis geçmişini</span> inceler</span>
+                    </div>
+                    <div class="list-item solution">
+                        <i class="material-icons">description</i>
+                        <span class="item-text">Servis fişi ve fatura PDF'lerine ulaşır</span>
+                    </div>
+                    <div class="list-item solution">
+                        <i class="material-icons">notifications</i>
+                        <span class="item-text">Anlık bildirim alır</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 2: Features -->
+    <section class="slide" id="section-features">
+        <div class="header">
+            <h1 class="title">Uygulama Özellikleri (MVP)</h1>
+        </div>
+        <div class="content" style="display: flex;">
+            <div class="features-section">
+                <div class="section-title">
+                    <i class="material-icons">check_circle</i>
+                    <span>Müşteriniz Telefon Etmezse</span>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="material-icons">phone_android</i>
+                            </div>
+                            <h3 class="feature-title">Telefon ile Giriş</h3>
+                        </div>
+                        <p class="feature-description">SMS doğrulama (OTP), şifre yok</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="material-icons">directions_car</i>
+                            </div>
+                            <h3 class="feature-title">Araç Listesi</h3>
+                        </div>
+                        <p class="feature-description">Tüm araçları görür (plaka, model, şase)</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="material-icons">update</i>
+                            </div>
+                            <h3 class="feature-title">Güncel Durum</h3>
+                        </div>
+                        <p class="feature-description">Servis / İşlemde / Hazır / Teslim</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="material-icons">history</i>
+                            </div>
+                            <h3 class="feature-title">Bakım Geçmişi</h3>
+                        </div>
+                        <p class="feature-description">Tüm servis kayıtları (tarih, km, işlemler)</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="material-icons">description</i>
+                            </div>
+                            <h3 class="feature-title">PDF Belgeler</h3>
+                        </div>
+                        <p class="feature-description">Servis fişi ve faturayı indirebilir</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-header">
+                            <div class="feature-icon">
+                                <i class="material-icons">notifications</i>
+                            </div>
+                            <h3 class="feature-title">Bildirimler</h3>
+                        </div>
+                        <p class="feature-description">Araç servise alındı, hazır, teslim</p>
+                    </div>
+                </div>
+            </div>
+            <div class="excluded-section">
+                <div class="section-title">
+                    <i class="material-icons">block</i>
+                    <span>MVP'de Olmayacak (İleride)</span>
+                </div>
+                <div class="excluded-list">
+                    <div class="excluded-item">
+                        <i class="material-icons excluded-icon">event</i>
+                        <span class="excluded-text">Online randevu</span>
+                    </div>
+                    <div class="excluded-item">
+                        <i class="material-icons excluded-icon">payments</i>
+                        <span class="excluded-text">Online ödeme</span>
+                    </div>
+                    <div class="excluded-item">
+                        <i class="material-icons excluded-icon">chat</i>
+                        <span class="excluded-text">Sohbet/destek</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 3: How it works -->
+    <section class="slide" id="section-how">
+        <div class="header">
+            <h1 class="title">Nasıl Çalışıyor?</h1>
+        </div>
+        <div class="content">
+            <div class="architecture">
+                <div class="system-box">
+                    <i class="material-icons system-icon">computer</i>
+                    <h3 class="system-title">Mevcut Sisteminiz</h3>
+                    <p class="system-description">Delta Pro masaüstü uygulaması<br>Servis ekibi tarafından kullanılır</p>
+                </div>
+                <div class="system-box">
+                    <i class="material-icons system-icon">sync</i>
+                    <h3 class="system-title">Entegrasyon</h3>
+                    <p class="system-description">Otomatik API bağlantısı<br>Veri senkronizasyonu</p>
+                </div>
+                <div class="system-box">
+                    <i class="material-icons system-icon">smartphone</i>
+                    <h3 class="system-title">Mobil Uygulama</h3>
+                    <p class="system-description">iOS + Android<br>Müşteri erişimi</p>
+                </div>
+            </div>
+            <div class="flow-section">
+                <div class="flow-title">
+                    <i class="material-icons">swap_horiz</i>
+                    <span>Veri Akışı</span>
+                </div>
+                <div class="flow-steps">
+                    <div class="flow-step">
+                        <div class="step-number">1</div>
+                        <i class="material-icons step-icon">edit</i>
+                        <p class="step-text">Siz Delta Pro'da <span class="highlight">işlem yaparsınız</span></p>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">2</div>
+                        <i class="material-icons step-icon">cloud_upload</i>
+                        <p class="step-text">Sistem <span class="highlight">otomatik</span> olarak mobil uygulamaya yansır</p>
+                    </div>
+                    <div class="flow-step">
+                        <div class="step-number">3</div>
+                        <i class="material-icons step-icon">visibility</i>
+                        <p class="step-text">Müşteri <span class="highlight">uygulamadan</span> durumu görür</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 4: Screens -->
+    <section class="slide" id="section-screens">
+        <div class="header">
+            <h1 class="title">Örnek Ekranlar</h1>
+        </div>
+        <div class="content">
+            <div class="screens-grid">
+                <div class="screen-card">
+                    <div class="screen-image">
+                        <img src="https://res.cloudinary.com/dvrinod2y/image/upload/v1767905135/giris_g92jcb.png" alt="Giriş Ekranı">
+                    </div>
+                    <div class="screen-content">
+                        <h3 class="screen-title">
+                            <i class="material-icons">login</i>
+                            Giriş Ekranı
+                        </h3>
+                        <ul class="screen-features">
+                            <li class="screen-feature"><i class="material-icons">phone</i>Telefon numarası girilir</li>
+                            <li class="screen-feature"><i class="material-icons">sms</i>SMS kodu gelir</li>
+                            <li class="screen-feature"><i class="material-icons">verified_user</i>Otomatik giriş</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">
+                        <img src="https://res.cloudinary.com/dvrinod2y/image/upload/v1767905135/araclarim_listesi_ewv6xg.png" alt="Araçlarım">
+                    </div>
+                    <div class="screen-content">
+                        <h3 class="screen-title">
+                            <i class="material-icons">directions_car</i>
+                            Araçlarım
+                        </h3>
+                        <ul class="screen-features">
+                            <li class="screen-feature"><i class="material-icons">list</i>Araç listesi</li>
+                            <li class="screen-feature"><i class="material-icons">info</i>Durum bilgisi</li>
+                            <li class="screen-feature"><i class="material-icons">fingerprint</i>Şase numarası görünür</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">
+                        <img src="https://res.cloudinary.com/dvrinod2y/image/upload/v1767905135/aracdetay_e7y4na.png" alt="Araç Detayı">
+                    </div>
+                    <div class="screen-content">
+                        <h3 class="screen-title">
+                            <i class="material-icons">car_info</i>
+                            Araç Detayı
+                        </h3>
+                        <ul class="screen-features">
+                            <li class="screen-feature"><i class="material-icons">info</i>Araç bilgileri</li>
+                            <li class="screen-feature"><i class="material-icons">update</i>Güncel durum</li>
+                            <li class="screen-feature"><i class="material-icons">schedule</i>Son güncelleme</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">
+                        <img src="https://res.cloudinary.com/dvrinod2y/image/upload/v1767905135/servis_gecmisi_vi3iwa.png" alt="Servis Geçmişi">
+                    </div>
+                    <div class="screen-content">
+                        <h3 class="screen-title">
+                            <i class="material-icons">history</i>
+                            Servis Geçmişi
+                        </h3>
+                        <ul class="screen-features">
+                            <li class="screen-feature"><i class="material-icons">list_alt</i>Tüm servis kayıtları</li>
+                            <li class="screen-feature"><i class="material-icons">event</i>Tarih, KM, işlemler</li>
+                            <li class="screen-feature"><i class="material-icons">download</i>PDF indirme</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">
+                        <img src="https://res.cloudinary.com/dvrinod2y/image/upload/v1767905135/belgeler_doggwo.png" alt="PDF Görüntüleme">
+                    </div>
+                    <div class="screen-content">
+                        <h3 class="screen-title">
+                            <i class="material-icons">picture_as_pdf</i>
+                            PDF Görüntüleme
+                        </h3>
+                        <ul class="screen-features">
+                            <li class="screen-feature"><i class="material-icons">receipt</i>Servis fişi</li>
+                            <li class="screen-feature"><i class="material-icons">description</i>Fatura</li>
+                            <li class="screen-feature"><i class="material-icons">share</i>İndirme/paylaşma</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">
+                        <img src="https://res.cloudinary.com/dvrinod2y/image/upload/v1767905135/dogrulama_g92jcb.png" alt="Doğrulama Ekranı">
+                    </div>
+                    <div class="screen-content">
+                        <h3 class="screen-title">
+                            <i class="material-icons">security</i>
+                            Doğrulama Ekranı
+                        </h3>
+                        <ul class="screen-features">
+                            <li class="screen-feature"><i class="material-icons">pin</i>6 haneli doğrulama kodu</li>
+                            <li class="screen-feature"><i class="material-icons">sms</i>SMS ile gönderilen kod</li>
+                            <li class="screen-feature"><i class="material-icons">refresh</i>Tekrar gönderme seçeneği</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">
+                        <img src="https://res.cloudinary.com/dvrinod2y/image/upload/v1767905135/servis_detay_smyqkn.png" alt="Servis Detayı">
+                    </div>
+                    <div class="screen-content">
+                        <h3 class="screen-title">
+                            <i class="material-icons">build</i>
+                            Servis Detayı
+                        </h3>
+                        <ul class="screen-features">
+                            <li class="screen-feature"><i class="material-icons">oil_can</i>Bakım işlemleri</li>
+                            <li class="screen-feature"><i class="material-icons">speed</i>Kilometre bilgisi</li>
+                            <li class="screen-feature"><i class="material-icons">settings</i>Değiştirilen parçalar</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 5: Notifications -->
+    <section class="slide" id="section-notifications">
+        <div class="header">
+            <h1 class="title">Bildirimler</h1>
+        </div>
+        <div class="content">
+            <div class="notification-intro">
+                <p class="intro-text">Müşteri ne zaman bildirim alır? Bildirimlere tıklayınca uygulama açılır ve araç detayı gösterilir.</p>
+            </div>
+            <div class="notifications-grid">
+                <div class="notification-card">
+                    <div class="notification-icon icon-1">
+                        <i class="material-icons">directions_car</i>
+                    </div>
+                    <div class="notification-content">
+                        <h3 class="notification-title">Araç Servise Alındı</h3>
+                        <p class="notification-message">"<span class="highlight">Aracınız</span> servise alındı. Durum güncellendi."</p>
+                    </div>
+                </div>
+                <div class="notification-card">
+                    <div class="notification-icon icon-2">
+                        <i class="material-icons">build</i>
+                    </div>
+                    <div class="notification-content">
+                        <h3 class="notification-title">İşlem Başladı</h3>
+                        <p class="notification-message">"<span class="highlight">Aracınızda</span> bakım başladı. Yakında güncelleyeceğiz."</p>
+                    </div>
+                </div>
+                <div class="notification-card">
+                    <div class="notification-icon icon-3">
+                        <i class="material-icons">check_circle</i>
+                    </div>
+                    <div class="notification-content">
+                        <h3 class="notification-title">Araç Hazır</h3>
+                        <p class="notification-message">Aracınız <span class="highlight">teslim almaya hazır!</span> 🎉</p>
+                    </div>
+                </div>
+                <div class="notification-card">
+                    <div class="notification-icon icon-4">
+                        <i class="material-icons">local_shipping</i>
+                    </div>
+                    <div class="notification-content">
+                        <h3 class="notification-title">Araç Teslim Edildi</h3>
+                        <p class="notification-message">Aracınız <span class="highlight">teslim edildi</span>. Servis geçmişini inceleyebilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 6: Security -->
+    <section class="slide" id="section-security">
+        <div class="header">
+            <h1 class="title">Güvenlik</h1>
+        </div>
+        <div class="content" style="display: flex;">
+            <div class="security-section">
+                <div class="section-title">
+                    <i class="material-icons">security</i>
+                    <span>Veri Güvenliği</span>
+                </div>
+                <div class="security-list">
+                    <div class="security-item">
+                        <i class="material-icons">lock</i>
+                        <span class="item-text">Delta Pro'ya <span class="highlight">dışarıdan erişilmez</span></span>
+                    </div>
+                    <div class="security-item">
+                        <i class="material-icons">visibility_off</i>
+                        <span class="item-text">Sadece <span class="highlight">okuma</span> işlemi yapılır</span>
+                    </div>
+                    <div class="security-item">
+                        <i class="material-icons">enhanced_encryption</i>
+                        <span class="item-text">Veriler <span class="highlight">şifreli</span> iletişimle korunur</span>
+                    </div>
+                    <div class="security-item">
+                        <i class="material-icons">block</i>
+                        <span class="item-text">Müşteri sadece bilgi görür (değiştiremez)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="infrastructure-section">
+                <div class="section-title">
+                    <i class="material-icons">dns</i>
+                    <span>Altyapı Güvenliği</span>
+                </div>
+                <div class="infrastructure-list">
+                    <div class="infrastructure-item">
+                        <i class="material-icons">storage</i>
+                        <span class="item-text"><span class="highlight">Güvenli</span> sunucu (VPS)</span>
+                    </div>
+                    <div class="infrastructure-item">
+                        <i class="material-icons">https</i>
+                        <span class="item-text"><span class="highlight">HTTPS</span> şifreleme</span>
+                    </div>
+                    <div class="infrastructure-item">
+                        <i class="material-icons">sms</i>
+                        <span class="item-text"><span class="highlight">Güvenli</span> SMS doğrulama</span>
+                    </div>
+                    <div class="infrastructure-item">
+                        <i class="material-icons">backup</i>
+                        <span class="item-text">Regular <span class="highlight">backup'lar</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 7: Technology -->
+    <section class="slide" id="section-technology">
+        <div class="header">
+            <h1 class="title">Teknoloji</h1>
+        </div>
+        <div class="content" style="display: flex;">
+            <div class="tech-section">
+                <div class="section-title">
+                    <i class="material-icons">code</i>
+                    <span>Kullanılan Teknolojiler</span>
+                </div>
+                <div class="tech-grid">
+                    <div class="tech-item">
+                        <div class="tech-header">
+                            <div class="tech-icon">
+                                <i class="material-icons">phone_android</i>
+                            </div>
+                            <span class="tech-name">Mobil Uygulama</span>
+                        </div>
+                        <p class="tech-description">Flutter (iOS + Android)</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-header">
+                            <div class="tech-icon">
+                                <i class="material-icons">notifications</i>
+                            </div>
+                            <span class="tech-name">Bildirimler</span>
+                        </div>
+                        <p class="tech-description">Firebase (Ücretsiz, güvenilir)</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-header">
+                            <div class="tech-icon">
+                                <i class="material-icons">api</i>
+                            </div>
+                            <span class="tech-name">API</span>
+                        </div>
+                        <p class="tech-description">.NET 8 (Modern, hızlı)</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-header">
+                            <div class="tech-icon">
+                                <i class="material-icons">storage</i>
+                            </div>
+                            <span class="tech-name">Database</span>
+                        </div>
+                        <p class="tech-description">PostgreSQL (Güvenilir, ücretsiz)</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-header">
+                            <div class="tech-icon">
+                                <i class="material-icons">description</i>
+                            </div>
+                            <span class="tech-name">PDF Depolama</span>
+                        </div>
+                        <p class="tech-description">Bunny.net (Hızlı, CDN dahil)</p>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-header">
+                            <div class="tech-icon">
+                                <i class="material-icons">sms</i>
+                            </div>
+                            <span class="tech-name">SMS</span>
+                        </div>
+                        <p class="tech-description">Ileti Merkezi (Türk firma)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="free-tools-section">
+                <div class="section-title">
+                    <i class="material-icons">card_giftcard</i>
+                    <span>Ücretsiz Araçlar</span>
+                </div>
+                <div class="free-tools">
+                    <div class="free-tool-item">
+                        <i class="material-icons free-tool-icon">code</i>
+                        <span class="free-tool-text">Development tools (.NET, Flutter)</span>
+                    </div>
+                    <div class="free-tool-item">
+                        <i class="material-icons free-tool-icon">storage</i>
+                        <span class="free-tool-text">Database (PostgreSQL)</span>
+                    </div>
+                    <div class="free-tool-item">
+                        <i class="material-icons free-tool-icon">notifications</i>
+                        <span class="free-tool-text">Push notifications (Firebase)</span>
+                    </div>
+                    <div class="free-tool-item">
+                        <i class="material-icons free-tool-icon">https</i>
+                        <span class="free-tool-text">SSL sertifikası</span>
+                    </div>
+                    <div class="free-tool-item">
+                        <i class="material-icons free-tool-icon">folder</i>
+                        <span class="free-tool-text">GitHub (kod deposu)</span>
+                    </div>
+                    <div class="savings">
+                        <div class="savings-text">Ücretsiz araçlar değeri:</div>
+                        <div class="savings-value">₺45.000+/yıl tasarruf</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 8: Timeline -->
+    <section class="slide" id="section-timeline">
+        <div class="header">
+            <h1 class="title">Zaman Planı</h1>
+        </div>
+        <div class="content">
+            <div class="weeks-container">
+                <div class="week-card">
+                    <div class="week-number">1. Hafta</div>
+                    <i class="material-icons week-icon">search</i>
+                    <h3 class="week-title">Sistem Analizi</h3>
+                    <p class="week-description">Delta Pro sisteminizi analiz ediyoruz</p>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">2. Hafta</div>
+                    <i class="material-icons week-icon">settings</i>
+                    <h3 class="week-title">Teknik Altyapı</h3>
+                    <p class="week-description">Sistem altyapısını kuruyoruz</p>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">3. Hafta</div>
+                    <i class="material-icons week-icon">swap_horiz</i>
+                    <h3 class="week-title">Entegrasyon</h3>
+                    <p class="week-description">Delta Pro ile entegrasyon</p>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">4. Hafta</div>
+                    <i class="material-icons week-icon">phone_android</i>
+                    <h3 class="week-title">Geliştirme</h3>
+                    <p class="week-description">Mobil uygulama geliştirme</p>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">5. Hafta</div>
+                    <i class="material-icons week-icon">bug_report</i>
+                    <h3 class="week-title">Test & Düzeltme</h3>
+                    <p class="week-description">Test ve düzeltmeler</p>
+                </div>
+                <div class="week-card">
+                    <div class="week-number">6. Hafta</div>
+                    <i class="material-icons week-icon">publish</i>
+                    <h3 class="week-title">Yayın</h3>
+                    <p class="week-description">App Store'a gönderme + canlı</p>
+                </div>
+            </div>
+            <div class="note">Not: App Store onay süreleri dahil.</div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 9: Cost -->
+    <section class="slide" id="section-cost">
+        <div class="header">
+            <h1 class="title">Maliyet</h1>
+        </div>
+        <div class="content">
+            <div class="cost-breakdown">
+                <div class="cost-card">
+                    <i class="material-icons cost-icon">calendar_today</i>
+                    <h3 class="cost-title">Yıllık Maliyet</h3>
+                    <div class="cost-value">₺9.500</div>
+                    <p class="cost-description">Yıllık toplam maliyet</p>
+                </div>
+                <div class="cost-card">
+                    <i class="material-icons cost-icon">date_range</i>
+                    <h3 class="cost-title">Aylık Maliyet</h3>
+                    <div class="cost-value">₺790</div>
+                    <p class="cost-description">Aylık düzenli ödeme</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 10: Advanced Features -->
+    <section class="slide" id="section-advanced">
+        <div class="header">
+            <h1 class="title">İleri Özellikler (Faz 2)</h1>
+        </div>
+        <div class="content" style="display: flex;">
+            <div class="ai-chatbot">
+                <div class="section-title">
+                    <i class="material-icons">smart_toy</i>
+                    <span>Yapay Zeka Destekli Sohbot</span>
+                </div>
+                <div class="chatbot-container">
+                    <div class="chatbot-header">
+                        <div class="chatbot-icon">
+                            <i class="material-icons">chat</i>
+                        </div>
+                        <h3 class="chatbot-title">Akıllı Müşteri Desteği</h3>
+                    </div>
+                    <div class="chatbot-features">
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">question_answer</i>
+                            <p class="feature-text">Müşteriler sorularını <span class="highlight">yazarak</span> sorabilecek</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">analytics</i>
+                            <p class="feature-text">Yapay zeka <span class="highlight">sadece araç verilerine</span> dayanarak cevap verecek</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">speed</i>
+                            <p class="feature-text">Anında ve <span class="highlight">otomatik</span> çözümler sunacak</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="material-icons feature-icon">history</i>
+                            <p class="feature-text">Geçmiş servis kayıtlarına dayalı cevaplar</p>
+                        </div>
+                    </div>
+                    <div class="chatbot-examples">
+                        <h4 class="example-title">Örnek Sorular:</h4>
+                        <div class="example-item">
+                            <i class="material-icons example-icon">chat_bubble</i>
+                            <span class="example-text">"Aracıma ne işlem yapıldı?"</span>
+                        </div>
+                        <div class="example-item">
+                            <i class="material-icons example-icon">chat_bubble</i>
+                            <span class="example-text">"Bir sonraki bakım ne zaman?"</span>
+                        </div>
+                        <div class="example-item">
+                            <i class="material-icons example-icon">chat_bubble</i>
+                            <span class="example-text">"Fren balatası değişmiş mi?"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline">
+                <div class="section-title">
+                    <i class="material-icons">schedule</i>
+                    <span>Zaman Çizelgesi</span>
+                </div>
+                <div class="timeline-container">
+                    <div class="phase-box">
+                        <div class="phase-number">1</div>
+                        <div class="phase-content">
+                            <h3 class="phase-title">MVP Tamamlanması</h3>
+                            <p class="phase-description">Temel özelliklerle uygulama geliştirme ve canlıya alma</p>
+                        </div>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-number">2</div>
+                        <div class="phase-content">
+                            <h3 class="phase-title">Yapay Zeka Entegrasyonu</h3>
+                            <p class="phase-description">AI modeli eğitimi ve sohbot entegrasyonu</p>
+                        </div>
+                    </div>
+                    <div class="phase-box">
+                        <div class="phase-number">3</div>
+                        <div class="phase-content">
+                            <h3 class="phase-title">Test ve İyileştirme</h3>
+                            <p class="phase-description">Kullanıcı geri bildirimlerine göre optimize etme</p>
+                        </div>
+                    </div>
+                    <div class="note-box">
+                        <i class="material-icons note-icon">lightbulb</i>
+                        <p class="note-text">MVP'den <span class="highlight">1-2 ay sonra</span> planlanıyor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 11: Next Steps -->
+    <section class="slide" id="section-next">
+        <div class="header">
+            <h1 class="title">Sonraki Adımlar</h1>
+        </div>
+        <div class="content" style="display: flex;">
+            <div class="steps-section">
+                <div class="section-title">
+                    <i class="material-icons">play_arrow</i>
+                    <span>Başlamak İçin Ne Gerekir?</span>
+                </div>
+                <div class="steps-container">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Onay</h3>
+                            <p class="step-description">Projenizi <span class="highlight">onaylayın</span></p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Delta Pro Analizi</h3>
+                            <p class="step-description">Sisteminizi <span class="highlight">incelememiz</span> için erişim</p>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Başlangıç</h3>
+                            <p class="step-description">Development'a <span class="highlight">başlayalım</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-section">
+                <div class="section-title">
+                    <i class="material-icons">contact_support</i>
+                    <span>İletişim</span>
+                </div>
+                <div class="contact-container">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="material-icons">email</i>
+                        </div>
+                        <p class="contact-text">📧 <span class="highlight">E-posta</span></p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="material-icons">phone</i>
+                        </div>
+                        <p class="contact-text">📱 <span class="highlight">Telefon</span></p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="material-icons">notifications</i>
+                        </div>
+                        <p class="contact-text">Her aşamada <span class="highlight">bilgilendireceğiz</span></p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="material-icons">event</i>
+                        </div>
+                        <p class="contact-text">Haftalık <span class="highlight">ilerleme raporları</span></p>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="material-icons">preview</i>
+                        </div>
+                        <p class="contact-text">Test aşamasında <span class="highlight">demo gösterimi</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <!-- Section 12: Summary -->
+    <section class="slide" id="section-summary">
+        <div class="header">
+            <h1 class="title">Özet ve Sonuç</h1>
+        </div>
+        <div class="content" style="display: flex;">
+            <div class="benefits-section">
+                <div class="section-title">
+                    <i class="material-icons">stars</i>
+                    <span>Proje Avantajları</span>
+                </div>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-header">
+                            <div class="benefit-icon icon-1">
+                                <i class="material-icons">sentiment_very_satisfied</i>
+                            </div>
+                            <h3 class="benefit-title">Müşteri Memnuniyeti</h3>
+                        </div>
+                        <p class="benefit-description">Şeffaf süreç ve anlık bilgi</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-header">
+                            <div class="benefit-icon icon-2">
+                                <i class="material-icons">speed</i>
+                            </div>
+                            <h3 class="benefit-title">Operasyonel Verimlilik</h3>
+                        </div>
+                        <p class="benefit-description">Daha az telefon trafiği</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-header">
+                            <div class="benefit-icon icon-3">
+                                <i class="material-icons">business</i>
+                            </div>
+                            <h3 class="benefit-title">Profesyonel İmaj</h3>
+                        </div>
+                        <p class="benefit-description">Modern teknoloji kullanımı</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-header">
+                            <div class="benefit-icon icon-4">
+                                <i class="material-icons">savings</i>
+                            </div>
+                            <h3 class="benefit-title">Maliyet-Etkin</h3>
+                        </div>
+                        <p class="benefit-description">₺790/ay gibi makul bir maliyet</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-header">
+                            <div class="benefit-icon icon-5">
+                                <i class="material-icons">trending_up</i>
+                            </div>
+                            <h3 class="benefit-title">Ölçeklenebilir</h3>
+                        </div>
+                        <p class="benefit-description">100'den 10.000 müşteriye kadar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="value-section">
+                <div class="section-title">
+                    <i class="material-icons">monetization_on</i>
+                    <span>Yatırım Değeri</span>
+                </div>
+                <div class="value-container">
+                    <div class="value-item">
+                        <i class="material-icons value-icon">calendar_today</i>
+                        <p class="value-text"><span class="highlight">Yıllık Maliyet:</span> ₺9.500</p>
+                    </div>
+                    <div class="value-item">
+                        <i class="material-icons value-icon">date_range</i>
+                        <p class="value-text"><span class="highlight">Aylık Maliyet:</span> ₺790</p>
+                    </div>
+                    <div class="value-item">
+                        <i class="material-icons value-icon">diamond</i>
+                        <p class="value-text"><span class="highlight">Değeri:</span> Paha biçilemez</p>
+                    </div>
+                    <div class="value-item">
+                        <i class="material-icons value-icon">thumb_up</i>
+                        <p class="value-text">Müşteri memnuniyeti</p>
+                    </div>
+                    <div class="value-item">
+                        <i class="material-icons value-icon">trending_up</i>
+                        <p class="value-text">Marka değeri</p>
+                    </div>
+                    <div class="value-item">
+                        <i class="material-icons value-icon">insights</i>
+                        <p class="value-text">Operasyonel verimlilik</p>
+                    </div>
+                    <div class="value-item">
+                        <i class="material-icons value-icon">leaderboard</i>
+                        <p class="value-text">Rakiplerden ayrışma</p>
+                    </div>
+                </div>
+                <div class="commitment-box">
+                    <h3 class="commitment-title">Hazır Mısınız?</h3>
+                    <div class="commitment-timeline">
+                        <div class="week-number">1</div>
+                        <div class="week-number">2</div>
+                        <div class="week-number">3</div>
+                        <div class="week-number">4</div>
+                        <div class="week-number">5</div>
+                        <div class="week-number">6</div>
+                    </div>
+                    <p class="commitment-text"><span class="highlight">6 haftada</span> uygulamayı kullanıma sunuyoruz!</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer">OtoAvrupa | Araç Servis Takip Mobil Uygulaması (MVP)</div>
+    </section>
+
+    <script>
+        // Active nav item on scroll
+        const sections = document.querySelectorAll('.slide');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - sectionHeight / 3)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === '#' + current) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth scroll for nav items
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = item.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
