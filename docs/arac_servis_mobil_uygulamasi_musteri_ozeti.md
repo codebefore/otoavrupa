@@ -18,15 +18,18 @@ Amaç: Müşteri memnuniyetini artırmak, telefonla bilgi sorma ihtiyacını aza
 ### Mevcut Sisteminiz
 - Servis operasyonları **Delta Pro** üzerinden aynen devam eder
 - Delta Pro **tek ana sistem** olmaya devam eder
+- **Veritabanı:** Advantage Database Server (fiziksel sunucuda çalışıyor)
+- **Erişim:** Windows Authentication ile güvenli bağlantı
 
 ### Yeni Eklenecek Yapı
 
-#### Müşteri Sunucusu (On-Prem)
-- Sunucunuza küçük bir **Bridge (bağlantı servisi)** kurulur
+#### Bridge Servisi (VPS)
+- Arkadaşınızın VPS'ine kurulacak **Bridge servisi**
 - Bu servis:
-  - Delta veritabanını **sadece okur** (read-only)
-  - Sunucunuza **dışarıdan erişim açmaz**
-  - Sadece güvenli şekilde **bulut sistemine veri gönderir**
+  - Advantage Database'e **Windows Authentication** ile bağlanır
+  - **Timestamp-based incremental sync** ile sadece değişen kayıtları çeker
+  - **Read-only** erişim (veritabanına yazma yapılmaz)
+  - Müşteri ofisine **dışarıdan erişim açmaz** (sizin tarafınızdan outbound bağlantı)
 
 #### Bulut Sistem (Yeni)
 - Tüm mobil uygulama trafiği burada yönetilir
@@ -85,49 +88,63 @@ Amaç: Müşteri memnuniyetini artırmak, telefonla bilgi sorma ihtiyacını aza
 ---
 
 ## 5. Güvenlik ve Sistem Sınırları
-- Sunucunuza **port açılmaz**
-- Delta veritabanına **yazma yapılmaz**
+- **Advantage Database**'e **Windows Authentication** ile güvenli bağlantı
+- Delta veritabanına **yazma yapılmaz** (read-only erişim)
+- Timestamp-based incremental sync ile sadece değişen kayıtlar çekilir
 - Mobil uygulama sadece bilgi gösterir
 - Servis içi operasyonlar aynen devam eder
+- **Non-invasive:** Mevcut Delta Pro sistemine dokunulmaz
 
 ---
 
 ## 6. Zaman Planı (MVP)
 
-**Toplam Süre: 6 Hafta**
+**Toplam Süre: 7-8 Hafta**
 
-Bu plan, App Store / Play Store yayın süreçleri ve Delta veritabanı analizinde yaşanabilecek belirsizlikler dikkate alınarak hazırlanmıştır.
+Bu plan, App Store / Play Store yayın süreçleri ve **Advantage Database Server** entegrasyonu dikkate alınarak hazırlanmıştır.
 
-- **1. Hafta:** Analiz & Planlama  
-  - Delta Pro veritabanı yapısının incelenmesi  
-  - Gerekli tabloların ve alanların netleştirilmesi  
-  - Beklenmeyen veri yapıları için adaptasyon
+- **1. Hafta:** Analiz & Planlama
+  - Advantage Database yapısının incelenmesi
+  - Timestamp column'ların tespiti (`last_updated` vb.)
+  - Gerekli tabloların ve alanların netleştirilmesi
+  - PDF dosya path'lerinin belirlenmesi
 
-- **2. Hafta:** Teknik Altyapı & Mimari Kurulum  
-  - Bulut backend kurulumu  
-  - Veritabanı şeması  
-  - Bridge temel yapısı
+- **2. Hafta:** Teknik Altyapı & Mimari Kurulum
+  - Cloud backend kurulumu (.NET 8)
+  - Veritabanı şeması (PostgreSQL)
+  - Bridge servisi temel yapısı
+  - Advantage .NET Provider entegrasyonu
 
-- **3. Hafta:** Delta Entegrasyonu & Senkronizasyon  
-  - Incremental veri senkronu  
-  - İş emri durum akışları  
-  - PDF belge aktarımı
+- **3. Hafta:** Advantage DB Sync Mekanizması
+  - **Timestamp-based incremental sync** implementasyonu
+  - 30 saniyede bir polling ile değişen kayıtların çekilmesi
+  - Windows Authentication bağlantısı
+  - Error handling ve retry mekanizması
 
-- **4. Hafta:** Mobil Uygulama Geliştirme  
-  - iOS / Android temel ekranlar  
+- **4. Hafta:** Delta Entegrasyonu & PDF Transfer
+  - İş emri durum akışları
+  - PDF belge aktarımı (Bunny.net storage)
+  - Push notification entegrasyonu
+
+- **5. Hafta:** Mobil Uygulama Geliştirme
+  - iOS / Android temel ekranlar
   - Giriş, araçlar, geçmiş, PDF
 
-- **5. Hafta:** Test & Stabilizasyon  
-  - Uçtan uca testler  
-  - Gerçek veri ile denemeler  
+- **6. Hafta:** Test & Stabilizasyon
+  - Uçtan uca testler
+  - Gerçek Advantage DB ile senkronizasyon testleri
   - Hata ve performans iyileştirmeleri
 
-- **6. Hafta:** Yayın & Canlıya Alma  
-  - App Store / Play Store hazırlıkları  
-  - Yayın onay süreçleri  
+- **7. Hafta:** Yayın & Canlıya Alma
+  - App Store / Play Store hazırlıkları
+  - Yayın onay süreçleri
   - Canlı ortam kontrolleri
 
-> Not: Mağaza onay süreçlerine bağlı olarak yayın süresi değişkenlik gösterebilir.
+- **8. Hafta:** Buffer (Risk Yönetimi)
+  - Gecikmeleri telafi etmek için ayrılan süre
+  - Ek testler ve düzeltmeler
+
+> Not: Advantage Database özel sync mekanizması gerektirdiği için +1-2 hafta eklendi. Mağaza onay süreçlerine bağlı olarak yayın süresi değişkenlik gösterebilir.
 
 ---
 

@@ -1,9 +1,10 @@
 # Araç Servis Mobil Uygulaması
 ## Müşteri Sunumu
 
-**Tarih:** 2026-01-08
+**Tarih:** 2026-01-09
 **Müşteri:** OtoAvrupa
 **Proje:** Araç Servis Takip Mobil Uygulaması (MVP)
+**Veritabanı:** Advantage Database Server (Onaylandı)
 
 ---
 
@@ -54,32 +55,46 @@
 
 ## 3. Nasıl Çalışıyor?
 
-### 🏗️ Teknik Mimari (Basitleştirilmiş)
+### 🏗️ Teknik Mimari (Advantage DB ile Güncellendi)
 
 ```
-Mevcut Sisteminiz                    Yeni Sistem
-─────────────────                    ─────────────
+Mevcut Sisteminiz                        Otomatik Sync                     Yeni Sistem
+─────────────────                        ────────────                     ─────────────
 
-┌──────────────────┐         ┌──────────────────┐
-│  Delta Pro       │         │  Mobil Uygulama  │
-│  (Masaüstü)      │   ────>  │  (iOS + Android)│
-│  Servis ekibi    │         │  Müşteri         │
-│  kullanır        │         └──────────────────┘
-└──────────────────┘                  ↑
-                                      │
-                              ┌───────┴───────┐
-                              │   Bulut API    │
-                              │   (Otomatik)   │
-                              └───────────────┘
+┌──────────────────┐                    ┌───────────────┐              ┌──────────────────┐
+│  Delta Pro       │                    │   Bridge      │              │  Mobil Uygulama  │
+│  (Masaüstü)      │ ──Advantage DB──> │   (.NET 8)    │──API──>      │  (iOS + Android)│
+│  Servis ekibi    │    Windows Auth     │   30 sn sync  │              │  Müşteri         │
+│  kullanır        │                    │   Timestamp   │              └──────────────────┘
+└──────────────────┘                    └───────────────┘
+                                                ↑
+                                          ┌─────┴─────┐
+                                          │   VPS     │
+                                          │  (Cloud)  │
+                                          └───────────┘
 ```
 
 ### 📊 Veri Akışı
 
 1. **Siz:** Delta Pro'da işlem yaparsınız (eski usül)
-2. **Sistem:** Otomatik olarak mobil uygulamaya yansır
-3. **Müşteri:** Uygulamadan durumu görür
+2. **Advantage DB:** Veriyi kaydeder (timestamp güncellenir)
+3. **Bridge Servisi:** 30 saniyede bir değişen kayıtları çeker
+4. **Bulut API:** Veriyi mobil uygulamaya iletir
+5. **Müşteri:** Uygulamadan anlık durum görür
 
 **Hiçbir ek iş yükü yok!**
+
+### 🔧 Teknik Detaylar
+
+| Bileşen | Teknoloji | Açıklama |
+|---------|-----------|----------|
+| **Veritabanı** | Advantage Database Server | Mevcut Delta Pro DB'si |
+| **Bağlantı** | Windows Authentication | Güvenli erişim |
+| **Sync** | Timestamp-based | Sadece değişen kayıtlar |
+| **Bridge** | .NET 8 Worker Service | 30 saniyede bir sync |
+| **API** | ASP.NET Core 8.0 | REST API |
+| **Mobile** | Flutter | iOS + Android |
+| **Push** | Firebase FCM | Ücretsiz bildirimler |
 
 ---
 
@@ -87,6 +102,7 @@ Mevcut Sisteminiz                    Yeni Sistem
 
 ### 🔒 Veri Güvenliği
 
+- ✅ Advantage DB'ye **Windows Authentication** ile güvenli erişim
 - ✅ Delta Pro'ya dışarıdan erişilmez (port açılmaz)
 - ✅ Sadece okuma işlemi yapılır (yazma yok)
 - ✅ Verileriniz güvende (şifreli iletişim)
@@ -103,18 +119,20 @@ Mevcut Sisteminiz                    Yeni Sistem
 
 ## 5. Zaman Planı
 
-### 📅 6 Haftada Canlıya Alıyoruz
+### 📅 7-8 Haftada Canlıya Alıyoruz
 
 | Hafta | Yapılacaklar |
 |-------|--------------|
-| **1. Hafta** | Sisteminizi analiz ediyoruz |
-| **2. Hafta** | Teknik altyapıyı kuruyoruz |
-| **3. Hafta** | Delta Pro ile entegrasyon |
-| **4. Hafta** | Mobil uygulama geliştirme |
-| **5. Hafta** | Test ve düzeltmeler |
-| **6. Hafta** | App Store'a gönderme + canlıya alma |
+| **1. Hafta** | Advantage DB yapısını analiz ediyoruz |
+| **2. Hafta** | Teknik altyapıyı kuruyoruz (.NET 8, API) |
+| **3. Hafta** | Timestamp-based sync mekanizması |
+| **4. Hafta** | Delta Pro ile entegrasyon + PDF transfer |
+| **5. Hafta** | Mobil uygulama geliştirme |
+| **6. Hafta** | Test ve düzeltmeler |
+| **7. Hafta** | App Store'a gönderme + canlıya alma |
+| **8. Hafta** | Buffer (risk yönetimi) |
 
-**Not:** App Store onay süreleri dahil.
+**Not:** Advantage Database özel sync entegrasyonu gerektirdiği için +1-2 hafta eklendi.
 
 ---
 

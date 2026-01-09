@@ -2,7 +2,7 @@
 ## Araç Servis Mobil Uygulama Sistemi
 
 **Analiz Tarihi:** 2026-01-08
-**Son Güncelleme:** 2026-01-08 (Müşteri görüşmesi sonrası)
+**Son Güncelleme:** 2026-01-09 (Advantage Database Server bilgisi ile güncellendi)
 
 **Analiz Edilen Dokümanlar:**
 - `arac_servis_mobil_uygulamasi_musteri_ozeti.md`
@@ -11,8 +11,13 @@
 
 **Müşteri Bilgileri:**
 - **Firma:** otoavrupa (Bursa'da araç servisi)
-- **Mevcut Sistem:** Delta Pro (Masaüstü uygulaması, local server'da çalışıyor)
-- **Infrastructure:** Arkadaşının sağlayacağı VPS (Delta DB kopyası burada olacak)
+- **Mevcut Sistem:** Delta Pro (Masaüstü uygulaması)
+- **Veritabanı:** **Advantage Database Server** (Sybase)
+  - Fiziksel sunucuda çalışıyor
+  - Windows Authentication ile bağlantı
+  - Native replication desteği **YOK** (custom sync gerekli)
+  - Timestamp column'ları var (muhtemelen `last_updated` vb.)
+- **Infrastructure:** Arkadaşının sağlayacağı VPS
 
 ---
 
@@ -98,9 +103,9 @@ Bu proje, otoavrupa için **müşteri odaklı bir araç servis takip uygulaması
 - Cloud backend'in failover mekanizması belirtilmemiş
 - PDF'lerin büyüklüğü ve storage maliyeti hesaplanmamış
 
-### 2.4. Güncellenmiş Mimari (Gerçek Senaryo - 2026-01-08)
+### 2.4. Güncellenmiş Mimari (Advantage Database - 2026-01-09)
 
-**Müşteri görüşmesinde öğrenilenlere göre güncellenmiş mimari:**
+**Advantage Database Server bilgisi doğrultusunda güncellenmiş mimari:**
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -108,26 +113,25 @@ Bu proje, otoavrupa için **müşteri odaklı bir araç servis takip uygulaması
 │  ┌────────────────────────────────────────────────────┐ │
 │  │ Local Server (Windows)                             │ │
 │  │ ├── Delta Pro (Masaüstü Uygulaması)               │ │
-│  │ └── Delta Database (Production DB)                 │ │
+│  │ └── Advantage Database (Production DB)            │ │
 │  │     - İş emri, bakım, parça, fatura kayıtları     │ │
-│  │     - PDF dosyaları                                │ │
+│  │     - Timestamp column'ları (last_updated vb.)    │ │
+│  │     - PDF dosyaları (disk path)                   │ │
+│  │     - Windows Authentication                      │ │
 │  └────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
                         ↓
-                  (Replication/Sync Mekanizması)
+                  (Windows Auth + VPN/Tunnel)
                         ↓
 ┌─────────────────────────────────────────────────────────┐
 │  Arkadaşının VPS'i (Sanal Sunucu)                       │
 │  ┌────────────────────────────────────────────────────┐ │
-│  │ Delta Database Kopyası (Replica)                   │ │
-│  │ - Production DB'nin read-only kopyası              │ │
-│  │ - Senkronize (real-time veya periodic)            │ │
-│  │                                                     │ │
-│  │ Bridge Service                                      │ │
-│  │ - Replica DB'yi okur                              │ │
-│  │ - Değişiklikleri tespit eder                       │ │
-│  │ - Cloud Backend'e gönderir                        │ │
-│  │ - Outbound HTTPS (443)                            │ │
+│  │ Bridge Service (.NET 8 Worker Service)             │ │
+│  │ - Advantage .NET Provider ile bağlanır            │ │
+│  │ - Timestamp-based incremental sync (30 sn)        │ │
+│  │ - Windows Authentication                          │ │
+│  │ - Değişen kayıtları Cloud Backend'e gönderir      │ │
+│  │ - PDF'leri Bunny.net'e upload eder                │ │
 │  └────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
                         ↓
@@ -152,17 +156,39 @@ Bu proje, otoavrupa için **müşteri odaklı bir araç servis takip uygulaması
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 2.5. Güncellenmiş Veri Akışı
+### 2.5. Güncellenmiş Veri Akışı (Advantage DB ile)
 
 1. **Servis personeli**, Delta Pro masaüstü uygulamasında iş emri oluşturur/durum değiştirir
-2. **Production DB**, değişiklikleri kaydeder
-3. **Replication mekanizması**, değişiklikleri VPS'teki replica DB'ye kopyalar
-4. **Bridge**, VPS'teki replica DB'yi tarar → değişiklikleri tespit eder
-5. **Bridge**, değişiklikleri Cloud Backend'e gönderir (PDF metadata'sı ile)
-6. **Cloud Backend**, veriyi kaydeder → Push notification tetikler
-7. **Mobil Uygulama**, kullanıcıya bilgi gösterir
+2. **Advantage Database**, değişiklikleri kaydeder (timestamp column'ları güncellenir)
+3. **Bridge Service (.NET)**, 30 saniyede bir Advantage DB'ye bağlanır
+   - Windows Authentication ile güvenli bağlantı
+   - `last_updated > @lastSync` koşuluyla değişen kayıtları çeker
+   - **Timestamp-based incremental sync** (sadece değişenler)
+4. **Bridge**, değişiklikleri Cloud Backend'e gönderir (PDF'lerle birlikte)
+5. **Cloud Backend**, veriyi kaydeder → Push notification tetikler
+6. **Mobil Uygulama**, kullanıcıya bilgi gösterir
 
-### 2.6. Bu Yaklaşımın Avantajları
+### 2.6. Sync Stratejisi: Timestamp-Based Incremental Sync
+
+**Neden Timestamp-Based?**
+- ✅ Advantage DB'de native replication **YOK**
+- ✅ En performanslı yöntem
+- ✅ Production DB'yi yormaz
+- ✅ Implementasyonu basit
+
+**Nasıl Çalışır?**
+```sql
+-- Örnek sync query
+SELECT * FROM vehicles
+WHERE last_updated > '2026-01-09 10:30:00'
+ORDER BY last_updated ASC;
+```
+
+**Sync Frekansı:** 30 saniyede bir
+**Gecikme:** Maksimum 30 saniye
+**Performans:** Sadece değişen kayıtlar çekildiği için hızlı
+
+### 2.7. Bu Yaklaşımın Avantajları
 
 ✅ **Production DB korunur** - Müşteri local server'ı yorulmaz
 ✅ **Güvenli** - Production DB'ye remote erişim açılmaz
@@ -171,13 +197,15 @@ Bu proje, otoavrupa için **müşteri odaklı bir araç servis takip uygulaması
 ✅ **Flexible deployment** - VPS'te Docker/native service easily deploy edilebilir
 ✅ **Cost effective** - Müşteri altyapısına yatırım gerekmez
 
-### 2.7. Bu Yaklaşımın Riskleri
+### 2.8. Bu Yaklaşımın Riskleri (Advantage DB)
 
-⚠️ **Replication complexity** - DB replication kurulumu ve monitoring
-⚠️ **Sync delay** - Replica DB'nin ne kadar gecikmeli olacağı belirsiz
+⚠️ **Replication yok** - Advantage DB'de native replication desteği yok (custom sync gerekli)
+⚠️ **VPN gerekebilir** - VPS ile müşteri ofisi arasında güvenli tunnel kurulmalı
+⚠️ **Timestamp column bağımlılığı** - Her tabloda timestamp column **olmalı**
+⚠️ **Deleted kayıt tespiti** - Silinen kayıtları tespit etmek ekstra logic gerektirir
+⚠️ **Sync gecikmesi** - Maksimum 30 saniye (kabul edilebilir)
 ⚠️ **VPS dependency** - Bridge için ek bir infrastructure var
-⚠️ **PDF transfer** - PDF'ler production'dan replica'ya nasıl gelecek?
-⚠️ **Single point of failure** - VPS çökerse ne olur?
+⚠️ **PDF transfer** - PDF'ler disk path'inden okunup Bunny.net'e upload edilecek
 
 ---
 
@@ -298,24 +326,20 @@ Bu proje, otoavrupa için **müşteri odaklı bir araç servis takip uygulaması
 
 ## 6. Teknik Riskler ve Belirsizlikler
 
-### 6.1. Yüksek Riskli Alanlar
+### 6.1. Yüksek Riskli Alanlar (Advantage DB)
 
-🔴 **Delta Pro Veritabanı Yapısı**
-- DB tipi bilinmiyor (MSSQL/Oracle/MySQL?)
-- Tablo isimleri, ilişkiler belirsiz
-- İş emri durum flow'u bilinmiyor
-- PDF storage konumu belirsiz
-- **Yeni:** DB'nin hangi edition olduğu (Express/Standard/Enterprise?)
+🔴 **Advantage Database Structure (Kısmen Çözüldü)**
+- ✅ **DB tipi biliniyor:** Advantage Database Server
+- ❓ **Tablo isimleri:** Bilinmiyor (local server'da kontrol edilecek)
+- ❓ **Timestamp column'lar:** Muhtemelen var (last_updated vb.) - **Doğrulanmalı**
+- ❓ **İş emri durum flow'u:** Bilinmiyor
+- ❓ **PDF storage path:** Disk path olarak biliniyor ama tam lokasyon bilinmiyor
 
-🔴 **Database Replication Mekanizması**
-- **Production → Replica nasıl senkronize olacak?**
-  - SQL Server Transactional Replication mı?
-  - Periodic backup/restore mu?
-  - Custom sync script mi?
-- **Eğer SQL Server Express ise:** Native replication yok, custom solution gerekir
-- **Replication delay:** Real-time (saniye) mı, periodic (dakika/saat) mi?
-- **Conflict resolution:** Production ve replica çakışması nasıl handled?
-- **Monitoring:** Replication status nasıl monitor edilecek?
+🔴 **Sync Strategy (Çözüldü: Timestamp-Based)**
+- ✅ **Approach:** Timestamp-based incremental sync (sadece değişen kayıtlar)
+- ⚠️ **Şart:** Her tabloda timestamp column **olmalı**
+- ⚠️ **Deleted records:** Silinen kayıtları tespit etmek için ekstra logic gerekli
+- ❓ **VPN requirement:** VPS ile müşteri ofisi arası tunnel gerekebilir
 
 🔴 **VPS ve Bridge Deployment**
 - **VPS specifications belirsiz:**
@@ -370,29 +394,29 @@ Bu proje, otoavrupa için **müşteri odaklı bir araç servis takip uygulaması
 
 ### 7.1. Acilen Karar Verilmesi Gerekenler (Öncelik Sırasıyla)
 
-❓ **1. Delta Pro Database Detayları (En Kritik)**
-- **Database tipi:** SQL Server / MySQL / PostgreSQL / SQLite?
-- **Edition:** Express / Standard / Enterprise? (Replication için kritik)
-- **Version:** 2019 / 2022 / başka?
-- **Tablo yapısı:** Hangi tablolar var? İş emri hangi tabloda?
-- **PDF storage:** DB içinde mi, disk dosyası mı?
-- **Approximate size:** DB boyutu kaç GB?
+✅ **1. Delta Pro Database Detayları (Çözüldü: Advantage DB)**
+- ✅ **Database tipi:** Advantage Database Server (Sybase)
+- ✅ **Authentication:** Windows Authentication
+- ❓ **Tablo yapısı:** Local server'da kontrol edilecek
+- ❓ **Timestamp column'lar:** Doğrulanmalı (last_updated, updated_at, vb.)
+- ❓ **PDF storage path:** Disk path öğrenilecek
+- ❓ **Approximate size:** DB boyutu kaç GB?
 
-❓ **2. VPS Specifications**
-- **OS:** Windows Server mi (SQL Server için) yoksa Linux mu?
+❓ **2. Advantage DB Connection Details (Local Server'da Kontrol Edilecek)**
+- **Server path:** `\\server\path\database.add` veya `C:\Data\database.add`?
+- **Database file name:** Delta DB'nin tam dosya adı ne?
+- **Table names:** `vehicles`, `service_orders`, `invoices` vs.?
+- **Timestamp columns:** Her tabloda hangi column?
+- **PDF path column:** Hangi column'da PDF yolu var?
+
+❓ **3. VPS Specifications**
 - **Resources:** CPU cores, RAM, SSD kapasitesi?
 - **Location:** VPS fiziksel olarak nerede? (Latency için önemli)
 - **Network:** Static IP var mı? Bandwidth limiti?
-- **Access:** RDP/SSH erişimi? Docker support?
+- **Access:** SSH erişimi? Docker support?
+- **VPN to customer office:** Gerekli mi, mümkün mü?
 
-❓ **3. Database Replication Strategy**
-- **Eğer SQL Server Standard+:** Transactional replication kullanılacak mı?
-- **Eğer SQL Server Express:** Custom sync script mi, backup/restore mu?
-- **Sync frequency:** Real-time (saniye), 5 dk, 15 dk, 1 saat?
-- **Bidirectional mi yoksa unidirectional mi?** (Sadece Prod → Replica)
-- **Conflict handling:** Conflict olursa ne olacak?
-
-✅ **4. Bridge Tech Stack (Karar Verildi)**
+✅ **5. Bridge Tech Stack (Karar Verildi)**
 - **Framework:** .NET 8 (Worker Service)
 - **Language:** C#
 - **Architecture:** Background service (HostBuilder)
